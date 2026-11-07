@@ -14,11 +14,13 @@ const readInput = createInput();
 // Temporary playtest switch until the menu exists (issue 08): ?condition=rain
 const asked = new URLSearchParams(location.search).get('condition');
 const condition = Object.hasOwn(EFFECTS, asked) ? asked : 'clear';
+// Also temporary: ?night=1 (the menu in issue 08 will choose day or night).
+const isDay = new URLSearchParams(location.search).get('night') !== '1';
 
 let run;
 function newCourse() {
   const seed = Math.floor(Math.random() * 2 ** 32); // fresh seed per Course
-  run = createRun({ ...generateCourse(seed), physics: getPhysics(condition) });
+  run = createRun({ ...generateCourse(seed), physics: getPhysics(condition), condition, isDay });
   results.hidden = true;
 }
 newCourse();

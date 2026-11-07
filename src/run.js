@@ -8,10 +8,13 @@ const FALL_MARGIN = 300; // px below the lowest platform before we call it a fal
 
 // physics: the Condition's config from effects.js (defaults to the Clear baseline).
 // seed: drives gust and Lightning Strike placement (the Course's own seed).
-export function createRun({ platforms, start, treasure, seed = 0, physics = PHYSICS }) {
+// condition, isDay: descriptive only, for the renderer. They never affect physics.
+export function createRun({ platforms, start, treasure, seed = 0, physics = PHYSICS, condition = 'clear', isDay = true }) {
   const lowest = Math.max(...platforms.map((p) => p.y + p.h));
   const storm = createStorm(seed, physics, platforms);
   const run = {
+    condition,
+    isDay,
     storm,
     platforms,
     start,

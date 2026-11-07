@@ -11,6 +11,7 @@ export function createStorm(seed, cfg, platforms) {
     force: { x: 0, y: 0 }, // current gust, px/s^2
     strikes: [],           // pending: { x, y, radius, timeLeft, telegraph }
     flash: 0,              // seconds the bolt stays visible after a strike lands
+    flashDuration: cfg.strikeFlash, // so the renderer can fade the flash
     lastStrike: null,      // { x, y } of the most recent strike (for drawing the bolt)
     gustTimer: 0,
     strikeTimer: nextStrikeIn(),
