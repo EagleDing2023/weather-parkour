@@ -9,17 +9,17 @@ import { STEP, PHYSICS } from '../src/config.js';
 const none = { left: false, right: false, jump: false, crouch: false };
 const floor = [{ x: -500, y: 500, w: 3000, h: 40 }];
 
-test('scenes: birds by day and crickets at night on Clear; rain; wind over light rain; Snow silent', () => {
-  assert.deepEqual(sceneFor('clear', true), { rain: 0, wind: 0, birds: 1, crickets: 0 });
-  assert.deepEqual(sceneFor('clear', false), { rain: 0, wind: 0, birds: 0, crickets: 1 });
+test('scenes: Clear is quiet by day and has crickets at night; rain; wind over light rain; Snow silent', () => {
+  assert.deepEqual(sceneFor('clear', true), { rain: 0, wind: 0, crickets: 0 });
+  assert.deepEqual(sceneFor('clear', false), { rain: 0, wind: 0, crickets: 1 });
   for (const day of [true, false]) {
     assert.ok(sceneFor('rain', day).rain > 0.5);
     assert.equal(sceneFor('rain', day).wind, 0);
     assert.ok(sceneFor('thunderstorm', day).wind > 0);
     assert.ok(sceneFor('thunderstorm', day).rain > 0 && sceneFor('thunderstorm', day).rain < sceneFor('rain', day).rain);
-    assert.deepEqual(sceneFor('snow', day), { rain: 0, wind: 0, birds: 0, crickets: 0 });
+    assert.deepEqual(sceneFor('snow', day), { rain: 0, wind: 0, crickets: 0 });
   }
-  assert.deepEqual(sceneFor(null), { rain: 0, wind: 0, birds: 0, crickets: 0 }); // menu
+  assert.deepEqual(sceneFor(null), { rain: 0, wind: 0, crickets: 0 }); // menu
 });
 
 test('wind gets louder with the gust, stays quiet without a wind layer', () => {

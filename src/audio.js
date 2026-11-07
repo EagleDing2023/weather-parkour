@@ -13,11 +13,11 @@ const WIND_GAIN = 0.22;
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 // Pure: how loud each ambient layer is (0-1) for a Condition and day/night.
-//   Clear: birds by day, crickets by night.  Rain: steady rain.
+//   Clear: crickets by night, quiet by day.  Rain: steady rain.
 //   Thunderstorm: wind (follows the gusts) over light rain.  Snow: hushed, silent.
 export function sceneFor(condition, isDay) {
-  const s = { rain: 0, wind: 0, birds: 0, crickets: 0 };
-  if (condition === 'clear') { if (isDay) s.birds = 1; else s.crickets = 1; }
+  const s = { rain: 0, wind: 0, crickets: 0 };
+  if (condition === 'clear') { if (!isDay) s.crickets = 1; }
   else if (condition === 'rain') s.rain = 0.8;
   else if (condition === 'thunderstorm') { s.rain = 0.35; s.wind = 0.3; }
   return s;
@@ -38,7 +38,7 @@ export function createAudio(Ctor = globalThis.AudioContext ?? globalThis.webkitA
   let ctx = null, master = null, noiseBuf = null, rainGain = null, windGain = null;
   let scene = sceneFor(null);
   let muted = false;
-  const timers = { birds: null, crickets: null };
+  const timers = { crickets: null };
 
   // ---- building blocks ----
 
@@ -108,10 +108,6 @@ export function createAudio(Ctor = globalThis.AudioContext ?? globalThis.webkitA
 
   // ---- ambience ----
 
-  function chirpPhrase() {
-    const n = 2 + Math.floor(Math.random() * 3), f0 = 2200 + Math.random() * 1000;
-    for (let i = 0; i < n; i++) tone('sine', f0 * (1 + i * 0.05), f0 * (1.35 + i * 0.04), 0.05 * scene.birds, 0.08, i * 0.11);
-  }
   function cricketBurst(freq) {
     for (let i = 0; i < 3; i++) tone('sine', freq, freq, 0.02 * scene.crickets, 0.03, i * 0.055);
   }
@@ -128,7 +124,6 @@ export function createAudio(Ctor = globalThis.AudioContext ?? globalThis.webkitA
     const now = ctx.currentTime;
     rainGain.gain.setTargetAtTime(scene.rain * RAIN_GAIN, now, 0.4);
     windGain.gain.setTargetAtTime(windTarget(scene.wind, 0), now, 0.4);
-    loopLater('birds', 700, 2600, () => scene.birds > 0, chirpPhrase);
     loopLater('crickets', 450, 500, () => scene.crickets > 0, () => cricketBurst(4300 + Math.random() * 300));
   }
 

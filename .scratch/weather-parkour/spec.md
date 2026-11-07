@@ -93,7 +93,7 @@ Exact values (friction, speed, jump height, gust strength) are tuned by playing,
 
 Made entirely in code with the Web Audio API, so there are still no audio files. Browsers only start audio after a user click, which the menu's Start and Preset buttons provide. `M` mutes.
 
-- Clear: birds by day, crickets by night.
+- Clear: quiet by day, crickets by night. (Birds were tried and removed: the user did not like the sound.)
 - Rain: steady rain.
 - Thunderstorm: wind that gets louder with the gusts, over light rain, and thunder (a crack then a rumble) when a Lightning Strike lands.
 - Snow: silent.
