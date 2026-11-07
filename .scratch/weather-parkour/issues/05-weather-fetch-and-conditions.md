@@ -1,6 +1,6 @@
 # 05: Weather fetch, geocoding and Condition mapping
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: none
 
 ## What to build
@@ -18,3 +18,7 @@ Given a city name, resolve it to coordinates, fetch current Weather from Open-Me
 ## Notes
 
 Confirm in the Open-Meteo docs (Context7) that `is_day` is available with the `current=` parameter before relying on it; so far it is only seen documented as hourly. If it is not, fall back to the hourly value for the current hour and tell the user. Do not invent field names.
+
+## Comments
+
+- Built in `8402ae6`. Tested with a fake network and one live call. `is_day` confirmed to work with `current=` against the live API.

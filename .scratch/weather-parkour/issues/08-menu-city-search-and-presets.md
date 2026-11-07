@@ -1,6 +1,6 @@
 # 08: Menu with city search and Presets
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 05
 
 ## What to build
@@ -18,3 +18,7 @@ A start menu where the player either searches a city for live Weather, or picks 
 ## Notes
 
 Use the term "Preset" (see `GLOSSARY.md`).
+
+## Comments
+
+- Built in `89a394d`. Menu logic checked with a fake DOM and fake network; layout and styling not viewed in a real browser. Replaced the temporary `?condition=` and `?night=1` switches.

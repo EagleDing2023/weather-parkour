@@ -1,6 +1,6 @@
 # 02: Collision, Respawn and the timer
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01
 
 ## What to build
@@ -18,3 +18,7 @@ Platforms the player can stand on and collide with, a fall detector, Respawn to 
 ## Notes
 
 Terms follow `GLOSSARY.md`: "Respawn", not "death" or "game over".
+
+## Comments
+
+- Built in `278b8b4`. Tested in Node.

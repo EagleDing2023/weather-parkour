@@ -1,6 +1,6 @@
 # 09: Renderer with Condition and day or night visuals
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01, 03
 
 ## What to build
@@ -26,3 +26,7 @@ Keeping the renderer separate is what lets a later pixel-art restyle replace onl
 
 - Request from the user: rain and darkness with clouds, and the falling direction of the rain shows where the wind pushes and how strong it is.
 - Day and night is not chosen anywhere until issue 08 (menu). Until then, a temporary `?night=1` URL switch (like `?condition=`) lets the renderer be tested at night. Remove it when the menu lands.
+
+## Comments
+
+- Built in `0a51c86`. Renderer smoke-tested for all 8 Condition/day-night combinations with a fake canvas; it has not been seen in a real browser. Added clouds and wind-slanted rain (user request).

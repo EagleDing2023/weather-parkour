@@ -1,6 +1,6 @@
 # 07: Thunderstorm: random forces and Lightning Strikes
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01, 02, 03, 05
 
 ## What to build
@@ -18,3 +18,7 @@ The Thunderstorm Effect: constant random forces on the player, plus Lightning St
 ## Notes
 
 Timings are tuned by playing. The telegraph (the warning circle) is required for fairness.
+
+## Comments
+
+- Built in `dfd531d`. Tested in Node. User played it: gusts and lightning feel OK. Strength 600 and strike timings are still tunable in config.

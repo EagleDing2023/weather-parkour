@@ -1,6 +1,6 @@
 # 06: Effects: Rain and Snow
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01, 05
 
 ## What to build
@@ -28,3 +28,7 @@ The Course generator (`src/course.js`) already limits gaps and rises using `WORS
 - Preferred fix: define Rain's overrides from `WORST_CASE` (or the reverse: derive `WORST_CASE` from the Rain override), so there is one source of truth, and the criterion above ("Rain's jump value is exposed...") is met by that.
 - Snow and Thunderstorm must not reduce jump height or max speed below Rain. Thunderstorm gusts can push the player either way, so check they cannot make a gap impossible.
 - Add a test that fails if Rain falls below `WORST_CASE`.
+
+## Comments
+
+- Built in `9eb62eb`. Tested in Node. Also fixed an unbounded speed-gain bug in movement. Rain and Snow numbers were playtested once by the user (Snow speed fixed); further tuning welcome.

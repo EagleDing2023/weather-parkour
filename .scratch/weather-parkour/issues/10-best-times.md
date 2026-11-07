@@ -1,6 +1,6 @@
 # 10: Best times in localStorage
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 04, 05
 
 ## What to build
@@ -17,3 +17,7 @@ Save the player's best completion time per Condition in the browser's `localStor
 ## Notes
 
 Best times are a rough comparison only, because each Course has a different seed (spec, Respawn and timer).
+
+## Comments
+
+- Built in `d941709`. Tested in Node with fake, blocked and corrupted storage; not checked against real `localStorage` in a browser.

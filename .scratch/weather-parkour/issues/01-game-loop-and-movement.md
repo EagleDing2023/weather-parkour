@@ -1,6 +1,6 @@
 # 01: Game loop, player movement and Crouch
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: none
 
 ## What to build
@@ -20,3 +20,7 @@ A page with a Canvas, a per-frame game loop, and a player who moves on a flat te
 ## Notes
 
 No Effects yet; this is the Clear baseline. Feel is tuned by a human playing it.
+
+## Comments
+
+- Built in `e3e1687`. Tested in Node. Physics numbers are placeholders; feel still needs human tuning.

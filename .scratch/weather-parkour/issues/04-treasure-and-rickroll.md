@@ -1,6 +1,6 @@
 # 04: Treasure and the Rickroll link
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 02, 03
 
 ## What to build
@@ -17,3 +17,7 @@ The Treasure chest at the end of the Course. Opening it stops the timer and open
 ## Notes
 
 The exact URL is not decided. Ask the user for it before building; do not guess one.
+
+## Comments
+
+- Built in `df66e2a`. Tested in Node. Pop-up/new-tab behaviour and the results overlay were not checked in a real browser.

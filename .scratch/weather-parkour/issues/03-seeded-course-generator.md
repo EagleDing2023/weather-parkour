@@ -1,6 +1,6 @@
 # 03: Seeded Course generator
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: none
 
 ## What to build
@@ -19,3 +19,7 @@ A pure function: given a seed, return the Course layout (a list of platforms plu
 ## Notes
 
 Layout depends only on the seed, never on the Condition (spec, Course section). The Rain jump limit comes from the physics config in issue 01, so read it from there rather than copying numbers.
+
+## Comments
+
+- Built in `02dc17b`. Tested in Node (500 seeds) and with a real-physics check. Rain limit now comes from `WORST_CASE` in config.
