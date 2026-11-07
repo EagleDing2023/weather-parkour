@@ -22,6 +22,7 @@
     #presets span { width: 150px; text-align: right; }
     #menu-error { color: #ffb3a8; margin: 0; max-width: 520px; }
     #menu-status { min-height: 1.2em; }
+    #best-times { margin: 0; font-size: 15px; opacity: .85; }
   </style>
 </head>
 <body>
@@ -41,9 +42,11 @@
         <h2>Or pick a Preset</h2>
         <div id="presets"></div>
       </section>
+      <p id="best-times"></p>
     </div>
     <div id="results" hidden>
       <div>Treasure opened! Time: <span id="result-time"></span></div>
+      <div id="result-best"></div>
       <div><button id="new-course">New Course</button> <button id="menu">Menu</button></div>
     </div>
   </div>

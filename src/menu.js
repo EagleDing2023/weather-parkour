@@ -6,7 +6,8 @@ import { CONDITIONS } from './weather.js';
 
 const $ = (id) => document.getElementById(id);
 
-export function createMenu({ onStart }) {
+// getBest(condition) returns best seconds or null.
+export function createMenu({ onStart, getBest }) {
   const screen = $('menu-screen');
   const form = $('city-form');
   const input = $('city');
@@ -15,6 +16,7 @@ export function createMenu({ onStart }) {
   const errorBox = $('menu-error');
   const resultBox = $('city-result');
   const summary = $('city-summary');
+  const bestLine = $('best-times');
 
   let token = 0;      // newer lookups cancel older ones that are still in flight
   let matches = [];
@@ -93,8 +95,16 @@ export function createMenu({ onStart }) {
     presets.append(row);
   }
 
+  function renderBest() {
+    const parts = CONDITIONS.map((c) => {
+      const t = getBest(c);
+      return `${label(c)} ${t === null ? '-' : t.toFixed(2) + 's'}`;
+    });
+    bestLine.textContent = 'Best times: ' + parts.join(' · ');
+  }
+
   return {
-    show() { clearMessages(); screen.hidden = false; input.focus(); },
+    show() { renderBest(); clearMessages(); screen.hidden = false; input.focus(); },
     hide() { screen.hidden = true; },
   };
 }

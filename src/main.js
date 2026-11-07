@@ -5,10 +5,14 @@ import { createRun } from './run.js';
 import { createInput } from './input.js';
 import { createRenderer } from './renderer.js';
 import { createMenu } from './menu.js';
+import { createBestTimes } from './besttimes.js';
+import { label } from './presets.js';
 
 const canvas = document.getElementById('game');
 const results = document.getElementById('results');
 const resultTime = document.getElementById('result-time');
+const resultBest = document.getElementById('result-best');
+const bestTimes = createBestTimes();
 const render = createRenderer(canvas);
 const readInput = createInput();
 
@@ -27,6 +31,7 @@ function newCourse() {
 }
 
 const menu = createMenu({
+  getBest: (c) => bestTimes.get(c),
   onStart(chosen) {
     setting = chosen;
     newCourse();
@@ -45,6 +50,11 @@ function tryOpenTreasure() {
   if (!playing || !run.openTreasure()) return;
   window.open(RICKROLL_URL, '_blank', 'noopener');
   resultTime.textContent = run.elapsed.toFixed(2) + 's';
+  // Best times are per Condition; Presets and city runs both count.
+  const r = bestTimes.record(run.condition, run.elapsed);
+  const name = label(run.condition);
+  resultBest.textContent = r.isBest ? `New best for ${name}!`
+    : r.best !== null ? `Best for ${name}: ${r.best.toFixed(2)}s` : '';
   results.hidden = false;
 }
 addEventListener('keydown', (e) => {
