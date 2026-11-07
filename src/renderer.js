@@ -11,5 +11,8 @@ export function createRenderer(canvas) {
     // Crouching draws shorter, anchored at the feet. Visual only.
     const h = p.crouching ? p.h * 0.7 : p.h;
     ctx.fillRect(p.x, p.y + p.h - h, p.w, h);
+    ctx.fillStyle = '#fff';
+    ctx.font = '20px monospace';
+    ctx.fillText(world.elapsed.toFixed(2) + 's', 16, 30);
   };
 }
