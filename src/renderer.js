@@ -38,6 +38,13 @@ export function rainVelocity(fall, wind) {
 
 const rand = (lo, hi) => lo + Math.random() * (hi - lo);
 
+// Wrap v into [lo, hi), like a clock face. Used so particles that leave one
+// side of the screen re-enter on the other.
+export function wrap(v, lo, hi) {
+  const size = hi - lo;
+  return ((((v - lo) % size) + size) % size) + lo;
+}
+
 export function createRenderer(canvas) {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
@@ -57,6 +64,7 @@ export function createRenderer(canvas) {
   const wind = { x: 0, y: 0 }; // smoothed, so the rain bends gradually when a gust changes
   let last = performance.now();
   let clock = 0;
+  let prevCam = null; // camera position last frame, to keep particles fixed in the world
 
   return function render(world) {
     const now = performance.now();
@@ -75,6 +83,12 @@ export function createRenderer(canvas) {
     // Camera: shift the world so the player stays centred.
     const camX = p.x + p.w / 2 - W / 2;
     const camY = p.y + p.h / 2 - H / 2;
+
+    // Rain and snow hang in the air, so when the camera moves they must slide the
+    // opposite way on screen. Without this they would seem to travel with the player.
+    const dCamX = prevCam ? camX - prevCam.x : 0;
+    const dCamY = prevCam ? camY - prevCam.y : 0;
+    prevCam = { x: camX, y: camY };
 
     // Sky
     const g = ctx.createLinearGradient(0, 0, 0, H);
@@ -149,9 +163,8 @@ export function createRenderer(canvas) {
       ctx.beginPath();
       for (const d of drops) {
         const v = rainVelocity(d.fall, wind);
-        d.x += v.vx * dt; d.y += v.vy * dt;
-        if (d.y > H) { d.y = -30; d.x = rand(-300, W + 300); }
-        if (d.x > W + 300) d.x -= W + 600; else if (d.x < -300) d.x += W + 600;
+        d.x = wrap(d.x + v.vx * dt - dCamX, -300, W + 300);
+        d.y = wrap(d.y + v.vy * dt - dCamY, -30, H);
         ctx.moveTo(d.x, d.y);
         ctx.lineTo(d.x - v.vx * d.len, d.y - v.vy * d.len); // streak trails behind the fall
       }
@@ -159,10 +172,8 @@ export function createRenderer(canvas) {
     } else if (theme.particles === 'snow') {
       ctx.fillStyle = world.isDay ? 'rgba(255,255,255,0.95)' : 'rgba(235,242,255,0.9)';
       for (const f of flakes) {
-        f.y += f.fall * dt;
-        f.x += (Math.sin(clock * 1.2 + f.phase) * 25 + wind.x * 0.3) * dt;
-        if (f.y > H + 5) { f.y = -5; f.x = rand(0, W); }
-        if (f.x > W + 5) f.x = -5; else if (f.x < -5) f.x = W + 5;
+        f.x = wrap(f.x + (Math.sin(clock * 1.2 + f.phase) * 25 + wind.x * 0.3) * dt - dCamX, -5, W + 5);
+        f.y = wrap(f.y + f.fall * dt - dCamY, -5, H + 5);
         ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
       }
     }

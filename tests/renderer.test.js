@@ -32,3 +32,15 @@ test('Thunderstorm is darker than Clear, and night darker than day', () => {
   assert.ok(lum(THEMES.thunderstorm.day.sky[0]) < lum(THEMES.clear.day.sky[0]));
   for (const c of Object.keys(THEMES)) assert.ok(lum(THEMES[c].night.sky[0]) < lum(THEMES[c].day.sky[0]), c);
 });
+
+test('wrap keeps values inside the range, in both directions', async () => {
+  const { wrap } = await import('../src/renderer.js');
+  assert.equal(wrap(5, 0, 10), 5);
+  assert.equal(wrap(12, 0, 10), 2);
+  assert.equal(wrap(-3, 0, 10), 7);
+  assert.equal(wrap(-1234, -300, 1200), wrap(-1234 + 1500 * 3, -300, 1200));
+  for (const v of [-99999, -1, 0, 9.5, 10, 123456]) {
+    const w = wrap(v, -30, 560);
+    assert.ok(w >= -30 && w < 560, `${v} -> ${w}`);
+  }
+});
