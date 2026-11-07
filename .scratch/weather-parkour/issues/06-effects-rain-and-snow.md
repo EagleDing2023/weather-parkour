@@ -19,3 +19,12 @@ Apply the Effect for the active Condition to the physics config. Clear is the ba
 ## Notes
 
 Exact numbers are not fixed in the spec. Pick starting values, then ask the user to playtest and adjust.
+
+## Notes from issue 03
+
+The Course generator (`src/course.js`) already limits gaps and rises using `WORST_CASE` in `src/config.js` (`jumpScale: 0.8`, `speedScale: 0.8`, as multipliers on the Clear `jumpSpeed` and `maxSpeed`). These are placeholders, because Rain did not exist yet.
+
+- Rain's `jumpSpeed` must be at least `PHYSICS.jumpSpeed * WORST_CASE.jumpScale`, and its `maxSpeed` at least `PHYSICS.maxSpeed * WORST_CASE.speedScale`. Otherwise some Courses become unfinishable under Rain.
+- Preferred fix: define Rain's overrides from `WORST_CASE` (or the reverse: derive `WORST_CASE` from the Rain override), so there is one source of truth, and the criterion above ("Rain's jump value is exposed...") is met by that.
+- Snow and Thunderstorm must not reduce jump height or max speed below Rain. Thunderstorm gusts can push the player either way, so check they cannot make a gap impossible.
+- Add a test that fails if Rain falls below `WORST_CASE`.
