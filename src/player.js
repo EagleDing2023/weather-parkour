@@ -1,6 +1,8 @@
 // Movement and collision. No drawing here (see renderer.js).
 import { PHYSICS, PLAYER_SIZE } from './config.js';
 
+const NO_FORCE = { x: 0, y: 0 };
+
 export function createPlayer(x, y) {
   return {
     x, y, vx: 0, vy: 0,
@@ -17,7 +19,8 @@ const overlaps = (a, p) =>
   a.x < p.x + p.w && a.x + a.w > p.x && a.y < p.y + p.h && a.y + a.h > p.y;
 
 // input: { left, right, jump, crouch } booleans. platforms: [{x,y,w,h}].
-export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS) {
+// force: extra acceleration in px/s^2 (Thunderstorm gusts), added after gravity.
+export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS, force = NO_FORCE) {
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   p.crouching = input.crouch && p.onGround;
   const air = p.onGround ? 1 : cfg.airControl;
@@ -53,6 +56,8 @@ export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS) {
   }
 
   p.vy = Math.min(p.vy + cfg.gravity * dt, cfg.maxFallSpeed);
+  p.vx += force.x * dt;
+  p.vy += force.y * dt;
 
   // Move X, then resolve; then Y. Separate axes make collisions simple.
   const wasGrounded = p.onGround;

@@ -21,6 +21,24 @@ export function createRenderer(canvas) {
     ctx.fillStyle = '#5a3d0a';
     ctx.fillRect(t.x, t.y + t.h * 0.4, t.w, 4); // lid line
 
+    // Lightning Strike warning circles: grow darker as the strike approaches.
+    const storm = world.storm;
+    for (const k of storm.strikes) {
+      const progress = 1 - k.timeLeft / k.telegraph;
+      ctx.fillStyle = `rgba(20, 0, 30, ${0.25 + 0.5 * progress})`;
+      ctx.beginPath();
+      ctx.ellipse(k.x, k.y, k.radius, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + 0.7 * progress})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    if (storm.flash > 0 && storm.lastStrike) {
+      const b = storm.lastStrike;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(b.x - 4, b.y - 1200, 8, 1200); // bolt from the sky
+    }
+
     ctx.fillStyle = '#d6402b';
     // Crouching draws shorter, anchored at the feet. Visual only.
     const h = p.crouching ? p.h * 0.7 : p.h;

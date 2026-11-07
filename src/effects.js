@@ -19,7 +19,12 @@ export const EFFECTS = {
     crouchFriction: 1500,
   },
 
-  thunderstorm: {}, // gusts and Lightning Strikes arrive in issue 07
+  // Deliberately the hardest. Random forces plus Lightning Strikes (storm.js).
+  // Jump and speed are not reduced, so Courses stay finishable (never below Rain).
+  thunderstorm: {
+    gustStrength: 600,
+    strikeEnabled: true,
+  },
 };
 
 // Returns a new physics config for the Condition; PHYSICS itself is never mutated.

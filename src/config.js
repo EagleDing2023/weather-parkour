@@ -12,6 +12,18 @@ export const PHYSICS = {
   crouchMaxSpeed: 120,    // sneaking is slow, like Minecraft
   coyoteTime: 0.1,        // s a jump still works after leaving a ledge
   jumpBuffer: 0.1,        // s a jump press is remembered before landing
+
+  // Thunderstorm. Off in the baseline; effects.js switches them on.
+  gustStrength: 0,        // max px/s^2 of the random force (0 = no gusts)
+  gustIntervalMin: 0.4,   // s before the gust changes direction and strength
+  gustIntervalMax: 1.0,
+  strikeEnabled: false,   // Lightning Strikes on/off
+  strikeIntervalMin: 2,   // s between strikes
+  strikeIntervalMax: 4,
+  strikeTelegraph: 0.8,   // s the warning circle shows before the strike lands
+  strikeRadius: 55,       // px, radius of the circle on the platform
+  strikeRange: 350,       // px: strikes target platforms this close (horizontally) to the player
+  strikeFlash: 0.15,      // s the lightning bolt stays visible
 };
 
 export const PLAYER_SIZE = { w: 28, h: 40 };

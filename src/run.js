@@ -2,13 +2,17 @@
 // No drawing here (see renderer.js).
 import { createPlayer, stepPlayer } from './player.js';
 import { TREASURE_SIZE, PHYSICS } from './config.js';
+import { createStorm } from './storm.js';
 
 const FALL_MARGIN = 300; // px below the lowest platform before we call it a fall
 
 // physics: the Condition's config from effects.js (defaults to the Clear baseline).
-export function createRun({ platforms, start, treasure, physics = PHYSICS }) {
+// seed: drives gust and Lightning Strike placement (the Course's own seed).
+export function createRun({ platforms, start, treasure, seed = 0, physics = PHYSICS }) {
   const lowest = Math.max(...platforms.map((p) => p.y + p.h));
+  const storm = createStorm(seed, physics, platforms);
   const run = {
+    storm,
     platforms,
     start,
     player: createPlayer(start.x, start.y),
@@ -51,8 +55,11 @@ export function createRun({ platforms, start, treasure, physics = PHYSICS }) {
         run.started = true;
       }
       if (run.started && !run.stopped) run.elapsed += dt;
-      stepPlayer(run.player, input, platforms, dt, physics);
-      if (run.player.y > run.killY) run.respawn();
+      // The storm only runs while the timer runs: waiting at the start is safe.
+      const active = run.started && !run.stopped;
+      const struck = active && storm.update(dt, run.player);
+      stepPlayer(run.player, input, platforms, dt, physics, active ? storm.force : undefined);
+      if (struck || run.player.y > run.killY) run.respawn();
     },
   };
   return run;
