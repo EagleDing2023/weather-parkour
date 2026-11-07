@@ -11,7 +11,7 @@
       text-align: center; color: #fff; font: 20px monospace; background: rgba(0,0,0,.55); }
     #results[hidden] { display: none; }
     button { font: 18px monospace; padding: 8px 16px; cursor: pointer; }
-    #menu-screen { position: absolute; inset: 0; display: grid; place-content: center; gap: 14px;
+    #menu-screen { position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; overflow-y: auto;
       text-align: center; color: #fff; font: 18px monospace; background: rgba(0,0,0,.6); }
     #menu-screen[hidden] { display: none; }
     #menu-screen h1 { margin: 0; font-size: 32px; }
@@ -23,6 +23,11 @@
     #menu-error { color: #ffb3a8; margin: 0; max-width: 520px; }
     #menu-status { min-height: 1.2em; }
     #best-times { margin: 0; font-size: 15px; opacity: .85; }
+    #controls { margin: 0; font-size: 13px; line-height: 1.5; opacity: .9; }
+    #controls b { color: #ffd34d; font-weight: normal; }
+    #presets button { padding: 5px 12px; }
+    #menu-btn { position: absolute; top: 10px; right: 10px; font-size: 14px; padding: 5px 12px; opacity: .85; }
+    #menu-btn[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -43,7 +48,13 @@
         <div id="presets"></div>
       </section>
       <p id="best-times"></p>
+      <p id="controls">
+        <b>Move</b> A / D or ← → &nbsp; <b>Jump</b> W, ↑ or Space &nbsp; <b>Crouch</b> S, ↓ or Shift<br>
+        Crouch stops you quickly and keeps you from sliding off an edge.<br>
+        <b>Open the Treasure</b> E, Enter or click &nbsp; <b>Back to menu</b> Esc
+      </p>
     </div>
+    <button id="menu-btn" tabindex="-1" hidden>Menu (Esc)</button>
     <div id="results" hidden>
       <div>Treasure opened! Time: <span id="result-time"></span></div>
       <div id="result-best"></div>

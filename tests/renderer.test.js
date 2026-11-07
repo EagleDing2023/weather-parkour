@@ -107,3 +107,47 @@ test('only Clear has grass; only Snow has icicles/cap', () => {
   for (const c of ['rain', 'snow', 'thunderstorm']) assert.ok(!THEMES[c].platform.grass, c);
   assert.ok(THEMES.snow.platform.snowCap);
 });
+
+test('camera lead: eases toward the running direction, capped, symmetric, no overshoot', async () => {
+  const { cameraLead, CAMERA_LEAD } = await import('../src/renderer.js');
+  let lead = 0;
+  for (let i = 0; i < 300; i++) lead = cameraLead(lead, 360, 360, 1 / 60);
+  assert.ok(Math.abs(lead - CAMERA_LEAD) < 1, 'settles at the cap, got ' + lead);
+  let left = 0;
+  for (let i = 0; i < 300; i++) left = cameraLead(left, -360, 360, 1 / 60);
+  assert.ok(Math.abs(left + CAMERA_LEAD) < 1);
+  assert.ok(cameraLead(0, 360, 360, 1 / 60) < CAMERA_LEAD * 0.1, 'gradual, not a snap');
+  assert.equal(cameraLead(0, 0, 360, 1 / 60), 0, 'standing still: no lead');
+  assert.ok(cameraLead(0, 99999, 360, 10) <= CAMERA_LEAD, 'speed above max and a huge dt never overshoot');
+  assert.ok(cameraLead(CAMERA_LEAD, 0, 360, 10) >= 0, 'easing back never overshoots past centre');
+});
+
+test('camera lead is proportional to speed (a slow crawl leads less than a run)', async () => {
+  const { cameraLead } = await import('../src/renderer.js');
+  const run = (vx) => { let l = 0; for (let i = 0; i < 300; i++) l = cameraLead(l, vx, 360, 1 / 60); return l; };
+  assert.ok(run(120) < run(360) * 0.5);
+});
+
+test('camera follow: trails a moving player by about speed/rate, never past the max lag', async () => {
+  const { followCamera, CAMERA_FOLLOW_X, CAMERA_MAX_LAG_X, CAMERA_MAX_LAG_Y } = await import('../src/renderer.js');
+  let cam = { x: 0, y: 0 }, px = 0;
+  for (let i = 0; i < 600; i++) { px += 360 / 60; cam = followCamera(cam, { x: px, y: 0 }, 1 / 60); }
+  const lag = px - cam.x;
+  assert.ok(lag > 30 && lag < CAMERA_MAX_LAG_X, 'camera is behind the player, lag ' + lag);
+  assert.ok(Math.abs(lag - 360 / CAMERA_FOLLOW_X) < 12, 'about speed/rate, got ' + lag);
+  // A very fast fall cannot push the player off screen.
+  let c2 = { x: 0, y: 0 }, py = 0;
+  for (let i = 0; i < 300; i++) { py += 1400 / 60; c2 = followCamera(c2, { x: 0, y: py }, 1 / 60); }
+  assert.ok(py - c2.y <= CAMERA_MAX_LAG_Y + 1e-9);
+});
+
+test('camera follow: catches up when the player stops, and never overshoots', async () => {
+  const { followCamera, CAMERA_MAX_LAG_X } = await import('../src/renderer.js');
+  let cam = { x: -100, y: 40 };
+  for (let i = 0; i < 300; i++) cam = followCamera(cam, { x: 0, y: 0 }, 1 / 60);
+  assert.ok(Math.abs(cam.x) < 1 && Math.abs(cam.y) < 1, 'settles on the target');
+  const jump = followCamera({ x: -100, y: 0 }, { x: 0, y: 0 }, 10); // huge dt
+  assert.ok(jump.x <= 0 && jump.x >= -1e-9, 'no overshoot, got ' + jump.x);
+  const far = followCamera({ x: -5000, y: 0 }, { x: 0, y: 0 }, 1 / 60); // e.g. after a Respawn
+  assert.ok(far.x >= -CAMERA_MAX_LAG_X, 'snaps to within max lag instead of sweeping 5000px');
+});

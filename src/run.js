@@ -13,6 +13,7 @@ export function createRun({ platforms, start, treasure, seed = 0, physics = PHYS
   const lowest = Math.max(...platforms.map((p) => p.y + p.h));
   const storm = createStorm(seed, physics, platforms);
   const run = {
+    physics, // the Condition's config; the renderer reads maxSpeed for the camera
     condition,
     isDay,
     storm,

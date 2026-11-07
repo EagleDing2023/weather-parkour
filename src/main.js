@@ -12,6 +12,7 @@ const canvas = document.getElementById('game');
 const results = document.getElementById('results');
 const resultTime = document.getElementById('result-time');
 const resultBest = document.getElementById('result-best');
+const menuBtn = document.getElementById('menu-btn');
 const bestTimes = createBestTimes();
 const render = createRenderer(canvas);
 const readInput = createInput();
@@ -36,6 +37,7 @@ const menu = createMenu({
     setting = chosen;
     newCourse();
     menu.hide();
+    menuBtn.hidden = false;
     playing = true;
   },
 });
@@ -63,11 +65,18 @@ addEventListener('keydown', (e) => {
 canvas.addEventListener('click', tryOpenTreasure);
 
 document.getElementById('new-course').addEventListener('click', newCourse); // same Condition
-document.getElementById('menu').addEventListener('click', () => {
+// Leave the current run and return to the menu (the run's timer is discarded).
+function goToMenu() {
   playing = false;
   results.hidden = true;
+  menuBtn.hidden = true;
   menu.show();
-});
+}
+document.getElementById('menu').addEventListener('click', goToMenu);
+menuBtn.addEventListener('click', goToMenu);
+// Don't let the button take keyboard focus, or pressing Space (jump) would click it.
+menuBtn.addEventListener('mousedown', (e) => e.preventDefault());
+addEventListener('keydown', (e) => { if (e.code === 'Escape' && playing) goToMenu(); });
 
 // Fixed timestep: physics always advances in 1/60 s slices, so behaviour
 // doesn't depend on the monitor's frame rate.

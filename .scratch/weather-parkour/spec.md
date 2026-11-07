@@ -23,8 +23,8 @@ This is also a first project for testing an agent workflow, so scope stays small
 ## Controls
 
 - Left / Right: `A` / `D` or arrow keys, with acceleration.
-- Jump: `W`, up arrow (and Space is not required).
-- Crouch: `S` or down arrow. Adds friction so the player stops quickly, and prevents sliding off a platform edge (like Minecraft's sneak).
+- Jump: `W`, up arrow or Space.
+- Crouch: `S`, down arrow or Shift. Adds friction so the player stops quickly, and prevents sliding off a platform edge (like Minecraft's sneak).
 - Coyote time: jump still works for a few frames after leaving a ledge.
 - Jump buffering: a jump pressed just before landing still counts.
 - Not included: slide, dash, wall-jump.

@@ -83,6 +83,39 @@ export function decorSpots(pl) {
   };
 }
 
+// Camera lead: the view eases ahead of the player in their running direction.
+export const CAMERA_LEAD = 25;        // px the view aims ahead at top speed (kept small)
+export const CAMERA_LEAD_RATE = 2.5;  // how quickly it eases (per second)
+
+// Camera follow: the camera trails the player and catches up smoothly, so the
+// player leads and the camera chases. Steady-state lag while running is about
+// speed / FOLLOW rate (360 / 6 = 60 px). Max lag keeps the player on screen
+// during fast falls.
+export const CAMERA_FOLLOW_X = 6;      // per second
+export const CAMERA_FOLLOW_Y = 5;
+export const CAMERA_MAX_LAG_X = 100;   // px the camera may fall behind, at most
+export const CAMERA_MAX_LAG_Y = 110;
+
+// Pure: move the camera centre `cam` toward `target`. Eases with a speed
+// proportional to the distance (no overshoot), then caps the distance.
+export function followCamera(cam, target, dt) {
+  const step = (c, t, rate, maxLag) => {
+    const next = c + (t - c) * Math.min(1, dt * rate);
+    return clamp(next, t - maxLag, t + maxLag);
+  };
+  return {
+    x: step(cam.x, target.x, CAMERA_FOLLOW_X, CAMERA_MAX_LAG_X),
+    y: step(cam.y, target.y, CAMERA_FOLLOW_Y, CAMERA_MAX_LAG_Y),
+  };
+}
+
+// Pure: next lead offset. Target is proportional to speed (so a slide on Snow
+// keeps leading), capped at CAMERA_LEAD; eases toward it without overshooting.
+export function cameraLead(current, vx, maxSpeed, dt) {
+  const target = clamp(vx / maxSpeed, -1, 1) * CAMERA_LEAD;
+  return current + (target - current) * Math.min(1, dt * CAMERA_LEAD_RATE);
+}
+
 // Wrap v into [lo, hi), like a clock face. Used so particles that leave one
 // side of the screen re-enter on the other.
 export function wrap(v, lo, hi) {
@@ -129,6 +162,8 @@ export function createRenderer(canvas) {
   let prevCam = null;          // camera position last frame, to keep particles fixed in the world
   let prevGround = false, prevVy = 0;
   let facing = 1;
+  let lead = 0;                // current camera lead in px (+ = looking right)
+  let cam = null;              // camera centre in world coordinates; trails the player
 
   // ---- sky and backdrop (screen space) ----
 
@@ -462,9 +497,12 @@ export function createRenderer(canvas) {
     wind.y += (storm.force.y - wind.y) * k;
 
     const p = world.player;
-    // Camera: shift the world so the player stays centred.
-    const camX = p.x + p.w / 2 - W / 2;
-    const camY = p.y + p.h / 2 - H / 2;
+    // Camera: trails the player with a short delay, aiming slightly ahead of where they run.
+    lead = cameraLead(lead, p.vx, world.physics.maxSpeed, dt);
+    const target = { x: p.x + p.w / 2 + lead, y: p.y + p.h / 2 };
+    cam = cam ? followCamera(cam, target, dt) : target; // first frame: start on the player
+    const camX = cam.x - W / 2;
+    const camY = cam.y - H / 2;
 
     // Rain and snow hang in the air, so when the camera moves they must slide the
     // opposite way on screen. Without this they would seem to travel with the player.
