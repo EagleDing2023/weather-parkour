@@ -2,12 +2,13 @@
 import { PHYSICS, PLAYER_SIZE, WORST_CASE } from './config.js';
 import { createRng, randRange } from './rng.js';
 
-export const PLATFORM_COUNT = 40;
+export const PLATFORM_COUNT = 10; // halved twice (40 -> 20 -> 10) after playtesting: still felt too long
 const THICKNESS = 24;
 const MIN_W = 120, MAX_W = 220;
 const MIN_GAP = 60;
 const SAFETY = 0.7;       // use only 70% of the theoretical reach
 const DROP_FACTOR = 1.5;  // dropping down is easier than climbing up
+const MIN_NET = 60;       // px the Course must rise or fall overall (about one big step)
 
 // Worst-case jump the Course must allow, read from the physics config.
 function limits() {
@@ -30,21 +31,43 @@ export function generateCourse(seed) {
   const rng = createRng(seed);
   const { maxRise, maxDrop } = limits();
   const dir = rng() < 0.5 ? 1 : -1; // 1 = rises overall, -1 = descends
+
+  // Draw everything random up front: widths, then one step (height change + gap) per join.
+  const widths = [];
+  const steps = [];
+  for (let i = 0; i < PLATFORM_COUNT; i++) {
+    widths.push(i === PLATFORM_COUNT - 1 ? MAX_W : randRange(rng, MIN_W, MAX_W));
+    if (i === PLATFORM_COUNT - 1) break;
+    // Mostly step in the overall direction, occasionally the other way.
+    const along = rng() < 0.85;
+    steps.push({
+      along,
+      mag: along ? randRange(rng, 0.2, 1) : randRange(rng, 0, 0.5),
+      gapFrac: rng(),
+    });
+  }
+  const riseOf = (st) => {
+    const sign = st.along ? dir : -dir;
+    return sign > 0 ? st.mag * maxRise : -st.mag * maxDrop;
+  };
+
+  // With few platforms, against-the-trend steps could cancel the real ones. If the
+  // Course would not clearly rise or descend, turn those steps to follow the trend.
+  const netToward = () => steps.reduce((sum, st) => sum + riseOf(st), 0) * dir;
+  for (const st of steps) {
+    if (netToward() >= MIN_NET) break;
+    if (!st.along) { st.along = true; st.mag = Math.max(st.mag, 0.2); }
+  }
+
   const platforms = [];
   let x = 0, y = 500;
-
   for (let i = 0; i < PLATFORM_COUNT; i++) {
-    const w = i === PLATFORM_COUNT - 1 ? MAX_W : randRange(rng, MIN_W, MAX_W);
+    const w = widths[i];
     platforms.push({ x: Math.round(x), y: Math.round(y), w: Math.round(w), h: THICKNESS });
     if (i === PLATFORM_COUNT - 1) break;
-
-    // Mostly step in the overall direction, occasionally the other way.
-    const with_ = rng() < 0.85;
-    const sign = with_ ? dir : -dir;
-    const mag = with_ ? randRange(rng, 0.2, 1) : randRange(rng, 0, 0.5);
-    const rise = sign > 0 ? mag * maxRise : -mag * maxDrop;
-    const gap = randRange(rng, MIN_GAP, Math.max(MIN_GAP, maxGapFor(rise)));
-    x += w + gap;
+    const rise = riseOf(steps[i]);
+    const maxGap = Math.max(MIN_GAP, maxGapFor(rise));
+    x += w + MIN_GAP + steps[i].gapFrac * (maxGap - MIN_GAP);
     y -= rise;
   }
 

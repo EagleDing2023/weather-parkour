@@ -25,7 +25,7 @@ Holding down to add friction so the player stops quickly and cannot slide off a 
 _Avoid_: Slide, sneak, brake
 
 **Course**:
-A randomly generated parkour route with a start and an end, gradually rising or descending, completable in 30 to 60 seconds.
+A randomly generated parkour route with a start and an end, gradually rising or descending, completable in about 8 to 15 seconds.
 _Avoid_: Level, map, track
 
 **Treasure**:

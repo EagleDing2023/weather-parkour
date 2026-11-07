@@ -4,7 +4,7 @@ Status: draft, agreed in a grilling session. Terms follow `GLOSSARY.md` (Weather
 
 ## Summary
 
-A short desktop browser parkour game. The player runs and jumps along a randomly generated Course to a Treasure. The Weather of a chosen city, or a Preset, sets the Condition, and the Condition's Effect changes how movement feels. A Course takes 30 to 60 seconds.
+A short desktop browser parkour game. The player runs and jumps along a randomly generated Course to a Treasure. The Weather of a chosen city, or a Preset, sets the Condition, and the Condition's Effect changes how movement feels. A Course takes about 8 to 15 seconds.
 
 This is also a first project for testing an agent workflow, so scope stays small: one game, one weather API, four Conditions.
 
@@ -32,7 +32,7 @@ This is also a first project for testing an agent workflow, so scope stays small
 ## Course
 
 - Randomly generated from a seed, with a fixed platform count so Courses have similar length.
-- Has a start and an end, and gradually rises or descends. Completable in 30 to 60 seconds.
+- Has a start and an end, and gradually rises or descends. Completable in about 8 to 15 seconds.
 - Layout depends only on the seed, not on the Condition. It is built to be passable with Rain's lowest jump, plus a safety margin, so every Condition can finish every Course.
 - A new Course gets a fresh random seed. A Respawn restarts the same Course with the same seed.
 - Ends at the Treasure. Opening the Treasure (click or key press, so the browser allows it) opens the Rickroll link in a new tab, and the game stays on the finished Course. The exact URL is confirmed with the user at build time.
