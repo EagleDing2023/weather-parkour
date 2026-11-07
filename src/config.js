@@ -21,3 +21,6 @@ export const STEP = 1 / 60; // fixed simulation timestep (s)
 // every Course is finishable everywhere. Issue 06 (Rain) must stay at or above
 // these multipliers. Placeholder values, tuned by playing.
 export const WORST_CASE = { jumpScale: 0.8, speedScale: 0.8 };
+
+export const RICKROLL_URL = 'https://www.youtube.com/watch?v=oHg5SJYRHA0';
+export const TREASURE_SIZE = { w: 36, h: 28 };

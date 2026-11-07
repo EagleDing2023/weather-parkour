@@ -7,6 +7,7 @@ const none = { left: false, right: false, jump: false, crouch: false };
 const make = () => createRun({
   platforms: [{ x: 0, y: 500, w: 200, h: 40 }],
   start: { x: 50, y: 460 },
+  treasure: { x: 150, y: 500 },
 });
 const tick = (r, input, n) => { for (let i = 0; i < n; i++) r.update(input, STEP); };
 
@@ -55,8 +56,24 @@ test('player collides with underside of a platform', () => {
   const r = createRun({
     platforms: [{ x: 0, y: 500, w: 300, h: 40 }, { x: 0, y: 380, w: 300, h: 20 }],
     start: { x: 50, y: 460 },
+    treasure: { x: 150, y: 500 },
   });
   let minY = Infinity;
   for (let i = 0; i < 60; i++) { r.update({ ...none, jump: i === 0 }, STEP); minY = Math.min(minY, r.player.y); }
   assert.ok(minY === 400, 'head stops at underside, y=' + minY);
+});
+
+test('Treasure cannot be opened from afar; opens once when touching and stops the timer', () => {
+  const r = make();
+  tick(r, { ...none, right: true }, 10);
+  assert.equal(r.openTreasure(), false);
+  assert.equal(r.opened, false);
+  r.player.x = r.treasureBox.x; r.player.y = r.treasureBox.y; // stand in the chest
+  assert.ok(r.touchingTreasure());
+  assert.equal(r.openTreasure(), true);
+  assert.ok(r.stopped);
+  const t = r.elapsed;
+  tick(r, { ...none, right: true }, 10);
+  assert.equal(r.elapsed, t);
+  assert.equal(r.openTreasure(), false); // only once
 });

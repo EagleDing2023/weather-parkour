@@ -6,10 +6,21 @@
   <style>
     body { margin: 0; background: #111; display: grid; place-items: center; min-height: 100vh; }
     canvas { background: #000; max-width: 100%; }
+    #stage { position: relative; }
+    #results { position: absolute; inset: 0; display: grid; place-content: center; gap: 12px;
+      text-align: center; color: #fff; font: 20px monospace; background: rgba(0,0,0,.55); }
+    #results[hidden] { display: none; }
+    button { font: 18px monospace; padding: 8px 16px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <canvas id="game" width="900" height="560"></canvas>
+  <div id="stage">
+    <canvas id="game" width="900" height="560"></canvas>
+    <div id="results" hidden>
+      <div>Treasure opened! Time: <span id="result-time"></span></div>
+      <div><button id="new-course">New Course</button> <button id="menu">Menu</button></div>
+    </div>
+  </div>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>
