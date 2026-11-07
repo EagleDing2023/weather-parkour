@@ -1,5 +1,7 @@
 # Weather Parkour
 
+**Play it in your browser: <https://eagleding2023.github.io/weather-parkour/>** (desktop only, no download needed)
+
 > **This is a testing project.** It was built to try out an AI-assisted
 > development workflow, not to be a polished or maintained game. Expect rough
 > edges, and expect numbers that were tuned by feel.
@@ -39,9 +41,9 @@ Day and night change only the look and sound, never the movement.
 A course takes roughly 10 to 20 seconds. Opening the treasure opens a Rickroll link
 in a new tab (it is a joke link to a well-known video).
 
-## Run it
+## Run it yourself
 
-You need Python 3 (only to serve the files) and a desktop browser.
+The online version above is the easiest way to try it. To run your own copy, you need Python 3 (only to serve the files) and a desktop browser.
 
 ```
 python3 -m http.server 8000
