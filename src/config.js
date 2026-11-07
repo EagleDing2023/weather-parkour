@@ -16,3 +16,8 @@ export const PHYSICS = {
 
 export const PLAYER_SIZE = { w: 28, h: 40 };
 export const STEP = 1 / 60; // fixed simulation timestep (s)
+
+// Course generation assumes the weakest movement any Condition can have, so
+// every Course is finishable everywhere. Issue 06 (Rain) must stay at or above
+// these multipliers. Placeholder values, tuned by playing.
+export const WORST_CASE = { jumpScale: 0.8, speedScale: 0.8 };
