@@ -11,11 +11,37 @@
       text-align: center; color: #fff; font: 20px monospace; background: rgba(0,0,0,.55); }
     #results[hidden] { display: none; }
     button { font: 18px monospace; padding: 8px 16px; cursor: pointer; }
+    #menu-screen { position: absolute; inset: 0; display: grid; place-content: center; gap: 14px;
+      text-align: center; color: #fff; font: 18px monospace; background: rgba(0,0,0,.6); }
+    #menu-screen[hidden] { display: none; }
+    #menu-screen h1 { margin: 0; font-size: 32px; }
+    #menu-screen h2 { margin: 0 0 6px; font-size: 18px; }
+    #menu-screen input, #menu-screen select { font: 18px monospace; padding: 8px; }
+    #presets { display: grid; gap: 6px; }
+    #presets div { display: flex; gap: 8px; justify-content: center; align-items: center; }
+    #presets span { width: 150px; text-align: right; }
+    #menu-error { color: #ffb3a8; margin: 0; max-width: 520px; }
+    #menu-status { min-height: 1.2em; }
   </style>
 </head>
 <body>
   <div id="stage">
     <canvas id="game" width="900" height="560"></canvas>
+    <div id="menu-screen">
+      <h1>Weather Parkour</h1>
+      <section>
+        <h2>Live weather</h2>
+        <form id="city-form"><input id="city" placeholder="City name" autocomplete="off"> <button>Search</button></form>
+        <select id="city-matches" hidden></select>
+        <div id="menu-status" role="status"></div>
+        <div id="city-result" hidden><span id="city-summary"></span> <button id="city-start" type="button">Start</button></div>
+      </section>
+      <p id="menu-error" role="alert" hidden></p>
+      <section>
+        <h2>Or pick a Preset</h2>
+        <div id="presets"></div>
+      </section>
+    </div>
     <div id="results" hidden>
       <div>Treasure opened! Time: <span id="result-time"></span></div>
       <div><button id="new-course">New Course</button> <button id="menu">Menu</button></div>
