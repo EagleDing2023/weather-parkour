@@ -115,4 +115,4 @@ what exists and reports events), and the same seed always makes the same course.
 - Weather and city search come from [Open-Meteo](https://open-meteo.com/), which needs
   no API key. Open-Meteo asks for attribution and has terms for free use, so check
   them before using this beyond personal testing.
-- No license has been chosen for this repository yet.
+- The code in this repository is released under the [MIT License](LICENSE). Open-Meteo's data has its own separate terms (see above).
