@@ -89,10 +89,20 @@ Exact values (friction, speed, jump height, gust strength) are tuned by playing,
 - Flat, minimal shapes drawn by code. No image, texture or sound files.
 - Sky colour and particles reflect Condition and day or night: clear is blue, rain is grey with streaks, snow is pale with drifting dots, Thunderstorm is dark with white flashes. Night is a darker version with stars. Day and night are visual only and do not change an Effect.
 
+## Sound
+
+Made entirely in code with the Web Audio API, so there are still no audio files. Browsers only start audio after a user click, which the menu's Start and Preset buttons provide. `M` mutes.
+
+- Clear: birds by day, crickets by night.
+- Rain: steady rain.
+- Thunderstorm: wind that gets louder with the gusts, over light rain, and thunder (a crack then a rumble) when a Lightning Strike lands.
+- Snow: silent.
+- Jump and landing sounds in every Condition; a harder landing is louder.
+
 ## Out of scope for version one
 
 - Pixel-art sprites (possible later, via the renderer module).
-- Sound and music, such as birds by day, crickets by night, or rain. Possible later; browsers require a user click before audio plays, which the menu already provides.
+- Music, and recorded audio files. (Sound effects and ambience are in, made in code; see Sound.)
 - Slide, dash, wall-jump, fog or wind Effects, accounts, leaderboards, mid-run weather changes.
 
 ## Open items for build time

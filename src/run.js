@@ -13,6 +13,7 @@ export function createRun({ platforms, start, treasure, seed = 0, physics = PHYS
   const lowest = Math.max(...platforms.map((p) => p.y + p.h));
   const storm = createStorm(seed, physics, platforms);
   const run = {
+    events: [], // { type: 'jump' | 'land' | 'thunder', ... } for the audio layer to drain
     physics, // the Condition's config; the renderer reads maxSpeed for the camera
     condition,
     isDay,
@@ -63,6 +64,10 @@ export function createRun({ platforms, start, treasure, seed = 0, physics = PHYS
       const active = run.started && !run.stopped;
       const struck = active && storm.update(dt, run.player);
       stepPlayer(run.player, input, platforms, dt, physics, active ? storm.force : undefined);
+      const pl = run.player;
+      if (pl.justJumped) run.events.push({ type: 'jump' });
+      if (pl.landSpeed > 150) run.events.push({ type: 'land', speed: pl.landSpeed });
+      if (storm.justLanded) { run.events.push({ type: 'thunder' }); storm.justLanded = false; }
       if (struck || run.player.y > run.killY) run.respawn();
     },
   };

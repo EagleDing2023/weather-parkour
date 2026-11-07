@@ -10,6 +10,7 @@ export function createStorm(seed, cfg, platforms) {
   const storm = {
     force: { x: 0, y: 0 }, // current gust, px/s^2
     strikes: [],           // pending: { x, y, radius, timeLeft, telegraph }
+    justLanded: false,     // a strike landed this step (for the thunder sound)
     flash: 0,              // seconds the bolt stays visible after a strike lands
     flashDuration: cfg.strikeFlash, // so the renderer can fade the flash
     lastStrike: null,      // { x, y } of the most recent strike (for drawing the bolt)
@@ -19,6 +20,7 @@ export function createStorm(seed, cfg, platforms) {
     // Advance by dt. Returns true if a strike landed on the player this step.
     update(dt, player) {
       storm.flash = Math.max(0, storm.flash - dt);
+      storm.justLanded = false;
 
       if (cfg.gustStrength > 0) {
         storm.gustTimer -= dt;
@@ -42,6 +44,7 @@ export function createStorm(seed, cfg, platforms) {
       for (const s of storm.strikes) {
         if (s.timeLeft > 0) continue;
         storm.flash = cfg.strikeFlash;
+        storm.justLanded = true;
         storm.lastStrike = { x: s.x, y: s.y };
         if (inCircle(s, player)) hit = true;
       }

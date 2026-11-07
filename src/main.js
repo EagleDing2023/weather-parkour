@@ -6,6 +6,7 @@ import { createInput } from './input.js';
 import { createRenderer } from './renderer.js';
 import { createMenu } from './menu.js';
 import { createBestTimes } from './besttimes.js';
+import { createAudio } from './audio.js';
 import { label } from './presets.js';
 
 const canvas = document.getElementById('game');
@@ -13,6 +14,7 @@ const results = document.getElementById('results');
 const resultTime = document.getElementById('result-time');
 const resultBest = document.getElementById('result-best');
 const menuBtn = document.getElementById('menu-btn');
+const audio = createAudio();
 const bestTimes = createBestTimes();
 const render = createRenderer(canvas);
 const readInput = createInput();
@@ -39,6 +41,8 @@ const menu = createMenu({
     menu.hide();
     menuBtn.hidden = false;
     playing = true;
+    audio.unlock(); // this click is the user gesture browsers require before audio
+    audio.setScene(chosen);
   },
 });
 
@@ -70,6 +74,7 @@ function goToMenu() {
   playing = false;
   results.hidden = true;
   menuBtn.hidden = true;
+  audio.setScene(null); // silence the ambience in the menu
   menu.show();
 }
 document.getElementById('menu').addEventListener('click', goToMenu);
@@ -77,6 +82,10 @@ menuBtn.addEventListener('click', goToMenu);
 // Don't let the button take keyboard focus, or pressing Space (jump) would click it.
 menuBtn.addEventListener('mousedown', (e) => e.preventDefault());
 addEventListener('keydown', (e) => { if (e.code === 'Escape' && playing) goToMenu(); });
+addEventListener('keydown', (e) => {
+  if (e.code === 'KeyM' && !e.repeat && !(e.target instanceof Element && e.target.closest('input, select, textarea'))) audio.toggleMute();
+});
+// "New Course" keeps the same Condition, so the ambience carries on.
 
 // Fixed timestep: physics always advances in 1/60 s slices, so behaviour
 // doesn't depend on the monitor's frame rate.
@@ -88,6 +97,12 @@ function frame(now) {
   while (acc >= STEP) {
     if (playing) run.update(readInput(), STEP);
     acc -= STEP;
+  }
+  if (playing) {
+    for (const e of run.events.splice(0)) audio.play(e); // jump, landing, thunder
+    audio.update(run.storm.force, run.physics.gustStrength);
+  } else {
+    run.events.length = 0;
   }
   render(run);
   requestAnimationFrame(frame);

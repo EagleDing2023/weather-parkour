@@ -12,6 +12,8 @@ export function createPlayer(x, y) {
     buffer: 0,        // time left in which a pressed jump is remembered
     jumpHeld: false,  // for edge detection: one press = one jump
     crouching: false,
+    justJumped: false, // true for the step in which a jump started (for sound)
+    landSpeed: 0,      // downward speed on the step the player landed, else 0
   };
 }
 
@@ -22,6 +24,8 @@ const overlaps = (a, p) =>
 // force: extra acceleration in px/s^2 (Thunderstorm gusts), added after gravity.
 export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS, force = NO_FORCE) {
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+  p.justJumped = false;
+  p.landSpeed = 0;
   p.crouching = input.crouch && p.onGround;
   const air = p.onGround ? 1 : cfg.airControl;
 
@@ -50,6 +54,7 @@ export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS, force = NO_FO
 
   if (p.buffer > 0 && p.coyote > 0) {
     p.vy = -cfg.jumpSpeed;
+    p.justJumped = true;
     p.buffer = 0;
     p.coyote = 0;
     p.onGround = false;
@@ -80,7 +85,10 @@ export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS, force = NO_FO
   p.y += p.vy * dt;
   for (const pl of platforms) {
     if (!overlaps(p, pl)) continue;
-    if (p.vy > 0) { p.y = pl.y - p.h; p.onGround = true; }
+    if (p.vy > 0) {
+      p.y = pl.y - p.h; p.onGround = true;
+      if (!wasGrounded) p.landSpeed = Math.max(p.landSpeed, p.vy);
+    }
     else if (p.vy < 0) p.y = pl.y + pl.h;
     p.vy = 0;
   }
