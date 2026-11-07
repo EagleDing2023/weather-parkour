@@ -1,11 +1,12 @@
 // One attempt at a Course: player, platforms, Respawn and the run timer.
 // No drawing here (see renderer.js).
 import { createPlayer, stepPlayer } from './player.js';
-import { TREASURE_SIZE } from './config.js';
+import { TREASURE_SIZE, PHYSICS } from './config.js';
 
 const FALL_MARGIN = 300; // px below the lowest platform before we call it a fall
 
-export function createRun({ platforms, start, treasure }) {
+// physics: the Condition's config from effects.js (defaults to the Clear baseline).
+export function createRun({ platforms, start, treasure, physics = PHYSICS }) {
   const lowest = Math.max(...platforms.map((p) => p.y + p.h));
   const run = {
     platforms,
@@ -50,7 +51,7 @@ export function createRun({ platforms, start, treasure }) {
         run.started = true;
       }
       if (run.started && !run.stopped) run.elapsed += dt;
-      stepPlayer(run.player, input, platforms, dt);
+      stepPlayer(run.player, input, platforms, dt, physics);
       if (run.player.y > run.killY) run.respawn();
     },
   };

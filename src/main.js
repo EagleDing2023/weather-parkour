@@ -1,5 +1,6 @@
 import { STEP, RICKROLL_URL } from './config.js';
 import { generateCourse } from './course.js';
+import { getPhysics, EFFECTS } from './effects.js';
 import { createRun } from './run.js';
 import { createInput } from './input.js';
 import { createRenderer } from './renderer.js';
@@ -10,10 +11,14 @@ const resultTime = document.getElementById('result-time');
 const render = createRenderer(canvas);
 const readInput = createInput();
 
+// Temporary playtest switch until the menu exists (issue 08): ?condition=rain
+const asked = new URLSearchParams(location.search).get('condition');
+const condition = Object.hasOwn(EFFECTS, asked) ? asked : 'clear';
+
 let run;
 function newCourse() {
   const seed = Math.floor(Math.random() * 2 ** 32); // fresh seed per Course
-  run = createRun(generateCourse(seed));
+  run = createRun({ ...generateCourse(seed), physics: getPhysics(condition) });
   results.hidden = true;
 }
 newCourse();

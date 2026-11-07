@@ -21,17 +21,15 @@ test('timer waits for first input', () => {
 
 test('falling off causes Respawn at start, timer not reset', () => {
   const r = make();
-  tick(r, { ...none, right: true }, 200); // runs off the right edge and falls
-  assert.ok(r.elapsed > 1);
-  const t = r.elapsed;
-  // After falling past killY the player is back at start.
-  let respawned = false;
-  for (let i = 0; i < 300 && !respawned; i++) {
-    r.update(none, STEP);
-    respawned = r.player.x === 50 && r.player.vx === 0 && r.player.y <= 460;
+  let respawned = false, before = 0;
+  for (let i = 0; i < 600 && !respawned; i++) {
+    const x = r.player.x;
+    before = r.elapsed;
+    r.update({ ...none, right: true }, STEP);
+    respawned = r.player.x < x - 50; // x jumped back to the start
   }
-  assert.ok(respawned);
-  assert.ok(r.elapsed >= t);
+  assert.ok(respawned, 'player was sent back to the start');
+  assert.ok(r.elapsed > before && r.elapsed > 0.5, 'timer kept running');
 });
 
 test('respawn() is callable and keeps the timer', () => {

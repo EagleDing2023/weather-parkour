@@ -25,11 +25,14 @@ export function stepPlayer(p, input, platforms, dt, cfg = PHYSICS) {
   // Horizontal: accelerate toward the held direction, else apply friction.
   const cap = p.crouching ? cfg.crouchMaxSpeed : cfg.maxSpeed;
   if (dir !== 0) {
-    p.vx += dir * cfg.accel * air * dt;
-    if (Math.abs(p.vx) > cap) {
-      // Slow down toward the cap with friction rather than snapping to it.
-      const f = (p.crouching ? cfg.crouchFriction : cfg.friction) * dt;
-      p.vx = Math.max(cap, Math.abs(p.vx) - f) * Math.sign(p.vx);
+    const f = (p.crouching ? cfg.crouchFriction : cfg.friction) * dt;
+    const along = p.vx * dir; // speed in the held direction (negative = moving against it)
+    if (along < cap) {
+      // Accelerate, but never past the cap.
+      p.vx = Math.min(along + cfg.accel * air * dt, cap) * dir;
+    } else {
+      // Already over the cap (e.g. just started crouching): bleed off, don't add more.
+      p.vx = Math.max(cap, along - f) * dir;
     }
   } else {
     const f = (p.crouching ? cfg.crouchFriction : cfg.friction) * air * dt;
